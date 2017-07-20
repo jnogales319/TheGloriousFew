@@ -13,6 +13,11 @@ namespace Assets
         private Vector3[] _normals;
         private Vector2[] _uv;
 
+        // map size
+        private int _xSize = 28;
+        private int _zSize = 28;
+        private float _tileSize = 1.0f;
+
         // Use this for initialization
         void Start ()
         {
@@ -33,37 +38,50 @@ namespace Assets
 
         private void GenerateMeshData()
         {
-            const int numTriangles = 2;
+            var numTiles = _xSize * _zSize;
+            var xVertSize = _xSize + 1;
+            var zVertSize = _zSize + 1;
+            var numVerts = xVertSize * zVertSize;
+
+            _vertices = new Vector3[numVerts];
+            _normals = new Vector3[numVerts];
+            _uv = new Vector2[numVerts];
+
+            const int trianglesPerTile = 2;
             const int pointsPerTriangle = 3;
-            const int totalTrianglePoints = numTriangles * pointsPerTriangle;
 
-            _vertices = new Vector3[4];
+            var numTriangles = numTiles * trianglesPerTile;
+            var totalTrianglePoints = numTriangles * pointsPerTriangle;
             _triangles = new int[totalTrianglePoints];
-            _normals = new Vector3[4];
-            _uv = new Vector2[4];
 
-            _vertices[0] = new Vector3(0,0,0);
-            _vertices[1] = new Vector3(1,0,0);
-            _vertices[2] = new Vector3(0,0,-1);
-            _vertices[3] = new Vector3(1,0,-1);
-
-            _triangles[0] = 0;
-            _triangles[1] = 3;
-            _triangles[2] = 2;
-
-            _triangles[3] = 0;
-            _triangles[4] = 1;
-            _triangles[5] = 3;
-
-            for(var i = 0; i < _normals.Length; i++)
-            {
-                _normals[i] = Vector3.up;
+            for (var z = 0; z < zVertSize; z++)
+            { 
+                for (var x = 0; x < xVertSize; x++)
+                {
+                    _vertices[z * xVertSize + x] = new Vector3(x * _tileSize, 0, z * _tileSize);
+                    _normals[z * xVertSize + x] = Vector3.up;
+                    _uv[z * xVertSize + x] = new Vector2((float) x / _xSize, (float) z / _zSize);
+                }
             }
 
-            _uv[0] = new Vector2(1, 1);
-            _uv[1] = new Vector2(0, 1);
-            _uv[2] = new Vector2(1, 0);
-            _uv[3] = new Vector2(1, 1);
+            const int trianglePointsPerTile = 6;
+
+            for (var z = 0; z < _zSize; z++)
+            {
+                for (var x = 0; x < _xSize; x++)
+                {
+                    var squareIndex = (z * _xSize) + x;
+                    var triIndex = squareIndex * trianglePointsPerTile;
+
+                    _triangles[triIndex + 0] = (z * xVertSize) + x;
+                    _triangles[triIndex + 1] = (z * xVertSize) + x + xVertSize;
+                    _triangles[triIndex + 2] = (z * xVertSize) + x + xVertSize + 1;
+                    
+                    _triangles[triIndex + 3] = (z * xVertSize) + x;
+                    _triangles[triIndex + 4] = (z * xVertSize) + x + xVertSize + 1;
+                    _triangles[triIndex + 5] = (z * xVertSize) + x + 1;
+                }
+            }
         }
 
         private void InitializeMesh()
