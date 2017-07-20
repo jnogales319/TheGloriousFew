@@ -16,7 +16,7 @@ namespace Assets
         // map size
         private int _xSize = 28;
         private int _zSize = 28;
-        private float _tileSize = 1.0f;
+        public float _tileSize = 1.0f;
 
         // Use this for initialization
         void Start ()
@@ -34,6 +34,7 @@ namespace Assets
             var meshCollider = GetComponent<MeshCollider>();
 
             meshFilter.mesh = _mesh;
+            meshCollider.sharedMesh = _mesh;
         }
 
         private void GenerateMeshData()
