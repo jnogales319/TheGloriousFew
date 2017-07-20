@@ -38,33 +38,42 @@ namespace Assets
 
         private void GenerateMeshData()
         {
-            var numTiles = _xSize * _zSize;
             var xVertSize = _xSize + 1;
             var zVertSize = _zSize + 1;
-            var numVerts = xVertSize * zVertSize;
 
+            SetupVertexMetadata(xVertSize, zVertSize);
+            SetupTriangles(xVertSize);
+        }
+
+        private void SetupVertexMetadata(int xVertSize, int zVertSize)
+        {
+            var numVerts = xVertSize * zVertSize;
             _vertices = new Vector3[numVerts];
             _normals = new Vector3[numVerts];
             _uv = new Vector2[numVerts];
 
-            const int trianglesPerTile = 2;
-            const int pointsPerTriangle = 3;
-
-            var numTriangles = numTiles * trianglesPerTile;
-            var totalTrianglePoints = numTriangles * pointsPerTriangle;
-            _triangles = new int[totalTrianglePoints];
-
             for (var z = 0; z < zVertSize; z++)
-            { 
+            {
                 for (var x = 0; x < xVertSize; x++)
                 {
                     _vertices[z * xVertSize + x] = new Vector3(x * _tileSize, 0, z * _tileSize);
                     _normals[z * xVertSize + x] = Vector3.up;
-                    _uv[z * xVertSize + x] = new Vector2((float) x / _xSize, (float) z / _zSize);
+                    _uv[z * xVertSize + x] = new Vector2((float)x / _xSize, (float)z / _zSize);
                 }
             }
+        }
 
-            const int trianglePointsPerTile = 6;
+        private void SetupTriangles(int xVertSize)
+        {
+            const int trianglesPerTile = 2;
+            const int pointsPerTriangle = 3;
+            const int trianglePointsPerTile = trianglesPerTile * pointsPerTriangle;
+
+            var numTiles = _xSize * _zSize;
+            var numTriangles = numTiles * trianglesPerTile;
+            var totalTrianglePoints = numTriangles * pointsPerTriangle;
+
+            _triangles = new int[totalTrianglePoints];
 
             for (var z = 0; z < _zSize; z++)
             {
@@ -76,7 +85,7 @@ namespace Assets
                     _triangles[triIndex + 0] = (z * xVertSize) + x;
                     _triangles[triIndex + 1] = (z * xVertSize) + x + xVertSize;
                     _triangles[triIndex + 2] = (z * xVertSize) + x + xVertSize + 1;
-                    
+
                     _triangles[triIndex + 3] = (z * xVertSize) + x;
                     _triangles[triIndex + 4] = (z * xVertSize) + x + xVertSize + 1;
                     _triangles[triIndex + 5] = (z * xVertSize) + x + 1;
