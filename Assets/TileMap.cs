@@ -24,7 +24,7 @@ namespace Assets
             BuildMesh();
         }
 
-        private void BuildMesh()
+        public void BuildMesh()
         {
             GenerateMeshData();
             InitializeMesh();
