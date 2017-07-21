@@ -14,8 +14,8 @@ namespace Assets
         private Vector2[] _uv;
 
         // map size
-        private int _xSize = 28;
-        private int _zSize = 28;
+        private int _xSize = 56;
+        private int _zSize = 56;
         public float _tileSize = 1.0f;
 
         // Use this for initialization
